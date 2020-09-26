@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 )
 
 type logonMessage struct {
@@ -28,27 +27,22 @@ type logonResponse struct {
 }
 
 func main() {
-	userPtr := flag.String("user", "administrator", "User Name")
+	userPtr := flag.String("username", "administrator", "User Name")
 	domainPtr := flag.CommandLine.String("domain", "", "Domain to log into")
 	serverPtr := flag.String("server", "api.mgmt.cloud.vmware.com", "FQDN/Hostname of vRA server")
 	passwordPtr := flag.String("password", "", "Password")
 	flag.Parse()
 
-	//logonInfo := logonMessage{*userPtr, *passwordPtr, *domainPtr}
-	logonInfo := logonMessage{*userPtr, *passwordPtr, *domainPtr}
-	logonJSON, err := json.Marshal(logonInfo)
+	logonJSON, err := json.Marshal(logonMessage{*userPtr, *passwordPtr, *domainPtr})
 
 	if err != nil {
 		fmt.Print("Error occurred")
-	} else {
-		//fmt.Printf("Marshalled JSON as | %s |\n", string(logonJSON[:]))
 	}
 
 	postURL := fmt.Sprintf("https://%s/csp/gateway/am/api/login?access_token", *serverPtr)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	resp, err := http.Post(postURL, "application/json", bytes.NewBuffer(logonJSON))
 	if err != nil {
-		// blah
 		log.Fatal(err)
 	}
 	if resp.Body != nil {
@@ -66,5 +60,4 @@ func main() {
 	var logonResp logonResponse
 	json.Unmarshal(respBody, &logonResp)
 	fmt.Print(logonResp.RefreshToken)
-	os.Setenv("VRA_REFRESH_TOKEN", logonResp.RefreshToken)
 }
