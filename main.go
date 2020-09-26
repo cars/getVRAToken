@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type logonMessage struct {
@@ -27,10 +28,14 @@ type logonResponse struct {
 }
 
 func main() {
+	var tokenType string
+
 	userPtr := flag.String("username", "administrator", "User Name")
 	domainPtr := flag.CommandLine.String("domain", "", "Domain to log into")
 	serverPtr := flag.String("server", "api.mgmt.cloud.vmware.com", "FQDN/Hostname of vRA server")
 	passwordPtr := flag.String("password", "", "Password")
+	flag.StringVar(&tokenType, "type", "refresh", "Token Type [refresh|access]")
+
 	flag.Parse()
 
 	logonJSON, err := json.Marshal(logonMessage{*userPtr, *passwordPtr, *domainPtr})
@@ -59,5 +64,11 @@ func main() {
 
 	var logonResp logonResponse
 	json.Unmarshal(respBody, &logonResp)
-	fmt.Print(logonResp.RefreshToken)
+	if strings.EqualFold("refresh", tokenType) {
+		fmt.Print(logonResp.RefreshToken)
+	} else if strings.EqualFold("access", tokenType) {
+		fmt.Print(logonResp.AccessToken)
+	} else {
+		log.Fatal("Invalude Token type specifed. Not 'refresh' or 'access'")
+	}
 }
