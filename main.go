@@ -69,6 +69,6 @@ func main() {
 	} else if strings.EqualFold("access", tokenType) {
 		fmt.Print(logonResp.AccessToken)
 	} else {
-		log.Fatal("Invalude Token type specifed. Not 'refresh' or 'access'")
+		log.Fatal("Invalid token type specifed. Not 'refresh' or 'access'")
 	}
 }
