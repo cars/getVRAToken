@@ -28,15 +28,18 @@ type logonResponse struct {
 }
 
 func main() {
-	var tokenType string
 
-	userPtr := flag.String("username", "administrator", "User Name")
-	domainPtr := flag.CommandLine.String("domain", "", "Domain to log into")
-	serverPtr := flag.String("server", "api.mgmt.cloud.vmware.com", "FQDN/Hostname of vRA server")
+	userPtr := flag.String("user", "administrator", "User Name")
 	passwordPtr := flag.String("password", "", "Password")
-	flag.StringVar(&tokenType, "type", "refresh", "Token Type [refresh|access]")
+	domainPtr := flag.String("domain", "", "Domain to log into")
+	serverPtr := flag.String("server", "api.mgmt.cloud.vmware.com", "FQDN/Hostname of vRA server")
+	tokenTypePtr := flag.String("type", "refresh", "Token Type [refresh|access]")
 
 	flag.Parse()
+
+	if !strings.EqualFold("refresh", *tokenTypePtr) && !strings.EqualFold("access", *tokenTypePtr) {
+		log.Fatal("Invalid token type specifed. Not 'refresh' or 'access'")
+	}
 
 	logonJSON, err := json.Marshal(logonMessage{*userPtr, *passwordPtr, *domainPtr})
 
@@ -64,11 +67,10 @@ func main() {
 
 	var logonResp logonResponse
 	json.Unmarshal(respBody, &logonResp)
-	if strings.EqualFold("refresh", tokenType) {
+	if strings.EqualFold("refresh", *tokenTypePtr) {
 		fmt.Print(logonResp.RefreshToken)
-	} else if strings.EqualFold("access", tokenType) {
+	} else if strings.EqualFold("access", *tokenTypePtr) {
 		fmt.Print(logonResp.AccessToken)
-	} else {
-		log.Fatal("Invalid token type specifed. Not 'refresh' or 'access'")
 	}
+
 }
