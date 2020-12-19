@@ -1,4 +1,4 @@
-#get a vRA8/C Refresh Token 
+# Get an access or refresh token from  vRA8/vRAC
 
 Simple program to get either a refresh  or acces token from vRealize Automation 8 that can be used
 by something else. 
