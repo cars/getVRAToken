@@ -7,10 +7,10 @@ Simple program to get a refresh token from vRealize Automation 8
 
 There are five params
 
-* -username : Name of the user logging in to vRA
-* -password: the user's password
+* -username(required) : Name of the user logging in to vRA
+* -password(required): the user's password
 * -domain(optional) : the authentication domain
-* -server: defaults to vRA Cloud Endpoint if not specified
-* -type: Token Type to return [access|refresh]
+* -server(optional): defaults to vRA Cloud API Endpoint if not specified
+* -type(optional default=refresh): Token Type to return [access|refresh]
 
 Simply returns the refresh_token value and nothing else.
