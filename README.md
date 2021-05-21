@@ -13,7 +13,7 @@ _This has been tested with vRA8 but not vRA Cloud (though it should work)_
 There are five params
 
 * -user : Name of the user logging in to vRA(defaults to administrator)
-* -password: the user's password
+* -password (required): the user's password
 * -domain: (optional) : the authentication domain
 * -server: Name/FQDN/IP of vra server (defaults to vRA Cloud Endpoint if not specified)
 * -type: Token Type to return  access|refresh (Defaults to refresh if not specified)

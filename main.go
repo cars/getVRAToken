@@ -25,6 +25,7 @@ type logonResponse struct {
 	IDToken      string `json:"id_token"`
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int64  `json:"expires_in"`
+	CSPAuthToken string `json:"cspAuthToken"`
 }
 
 func main() {
@@ -47,7 +48,12 @@ func main() {
 		fmt.Print("Error occurred")
 	}
 
-	postURL := fmt.Sprintf("https://%s/csp/gateway/am/api/login?access_token", *serverPtr)
+	postURL := fmt.Sprintf("https://%s/csp/gateway/am/api/login", *serverPtr)
+
+	if strings.EqualFold("refresh", *tokenTypePtr) {
+		postURL += "?access_token"
+	}
+
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	resp, err := http.Post(postURL, "application/json", bytes.NewBuffer(logonJSON))
 	if err != nil {
@@ -70,7 +76,7 @@ func main() {
 	if strings.EqualFold("refresh", *tokenTypePtr) {
 		fmt.Print(logonResp.RefreshToken)
 	} else if strings.EqualFold("access", *tokenTypePtr) {
-		fmt.Print(logonResp.AccessToken)
+		fmt.Print(logonResp.CSPAuthToken)
 	}
 
 }
